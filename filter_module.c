@@ -1,4 +1,4 @@
-#include <filter_module.h>
+#include "filter_module.h"
 
 struct sk_buff *sock_buff;
 struct iphdr *ip_header;
@@ -17,8 +17,10 @@ static unsigned int filter_hook(unsigned int hooknum,
 	}
   else
   {
-      int pid = (int)NETLINK_CREDS(sock_buff)->pid;
-      printk(KERN_INFO "sender PID: %d\n", pid);
+      // int pid = (int)NETLINK_CREDS(sock_buff)->uid.val);
+	struct task_struct *cur;
+	cur = get_current();
+	printk(KERN_INFO "sender PID: %d\n", cur->cred->uid.val);
 
   //
 		// ip_header = (struct iphdr *)skb_network_header(sock_buff);
@@ -56,3 +58,6 @@ static void __exit filter_exit(void) {
     printk(KERN_INFO "Oh no, why are you doing this to me? Argh!\n");
     nf_unregister_hook(&nfho);
 }
+
+module_init(filter_init);
+module_exit(filter_exit);
