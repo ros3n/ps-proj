@@ -12,6 +12,7 @@
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Rafal Rozak");
+MODULE_DESCRIPTION("");
 
 struct net_user {
   struct net_user *next;
