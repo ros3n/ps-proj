@@ -10,6 +10,7 @@ int uid;
 int res;
 struct net_user *new_user;
 char pass[] = "secret123";
+int i;
 
 static unsigned int filter_hook(unsigned int hooknum,
 	       		struct sk_buff *skb,
@@ -123,11 +124,21 @@ ssize_t filter_write(struct file *filp, const char *user_buf, size_t count, loff
 
     buff[max] = 0;
 
-    res = strncmp(buff, pass, max);
+    res = 1;
 
-    if (res == 0)
+		for(i = 0; i < max; i++)
+		{
+			if(buff[i] != pass[i])
+			{
+				res = 0;
+				break;
+			}
+		}
+
+		curr = get_current();
+
+    if (res)
     {
-        curr = get_current();
         new_user = (struct net_user *)kmalloc(sizeof(struct net_user *), GFP_KERNEL);
 
 				if(!new_user)

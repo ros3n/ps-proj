@@ -8,7 +8,7 @@
 #include <linux/ip.h>
 #include <linux/netlink.h>
 
-#define BUFF_SIZE 15
+#define BUFF_SIZE 20
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Rafal Rozak");
