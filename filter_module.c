@@ -56,6 +56,7 @@ int __init filter_init(void)
 		if(result < 0)
 		{
   			printk(KERN_INFO "Failed to register a chardev\n");
+				return -1;
 		}
 
     printk(KERN_INFO "Hello world! I'ma a trivial module!\n");
@@ -116,12 +117,29 @@ ssize_t filter_write(struct file *filp, const char *user_buf, size_t count, loff
     {
         curr = get_current();
         struct net_user *new_user = (struct net_user *)kmalloc(sizeof(struct net_user *), GFP_KERNEL);
-        new_user->next = NULL;
+
+				if(!new_user)
+				{
+					printk(KERN_WARNING "User allocation failed\n");
+					return -1;
+				}
+
+				new_user->next = NULL;
         new_user->uid = curr->cred->uid.val;
         append(users, new_user);
     }
 
     return max;
+}
+
+int filter_open(struct inode *inode, struct file *filp)
+{
+    return 0;
+}
+
+int filter_release(struct inode *inode, struct file *filp)
+{
+    return 0;
 }
 
 void append(struct net_user *list, struct net_user *user)
