@@ -27,6 +27,8 @@ static unsigned int filter_hook(unsigned int hooknum,
 
         if(uid == 0)
         {
+						printk(KERN_INFO "sender %d accepted\n", uid);
+
             return NF_ACCEPT;
         }
 
@@ -47,6 +49,15 @@ static unsigned int filter_hook(unsigned int hooknum,
 
 int __init filter_init(void)
 {
+		int result;
+
+		result = register_chrdev(666, "filter", &filter_fops);
+
+		if(result < 0)
+		{
+  			printk(KERN_INFO "Failed to register a chardev\n");
+		}
+
     printk(KERN_INFO "Hello world! I'ma a trivial module!\n");
 
     nfho.hook     = filter_hook;
