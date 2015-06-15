@@ -22,9 +22,9 @@ static unsigned int filter_hook(unsigned int hooknum,
   else
   {   //
 	curr = get_current();
-	
+
         int uid = (int)(curr->cred->uid.val);
-        
+
         if(uid == 0)
         {
             return NF_ACCEPT;
@@ -33,12 +33,12 @@ static unsigned int filter_hook(unsigned int hooknum,
         if(find(users, uid))
         {
             printk(KERN_INFO "sender %d accepted\n", uid);
-            
+
             return NF_ACCEPT;
         }
         else
         {
-            printk(KERN_INFO "sender %d not allowed to send packets", uid);
+            printk(KERN_INFO "sender %d not allowed to send packets\n", uid);
 
             return NF_DROP;
         }
@@ -56,10 +56,23 @@ int __init filter_init(void)
   	nf_register_hook(&nfho);
 
     users = (struct net_user *) kmalloc(sizeof(struct net_user *), GFP_KERNEL);
+
+		if(!users)
+		{
+			printk(KERN_WARNING "Users list allocation failed\n");
+			return -1;
+		}
+
     users->next = NULL;
     users->uid = -1;
 
     buff = (char *) kmalloc(BUFF_SIZE, GFP_KERNEL);
+
+		if(!buff)
+		{
+			printk(KERN_WARNING "Buffer allocation failed\n");
+			return -1;
+		}
 
     return 0;
 }
@@ -106,7 +119,7 @@ void append(struct net_user *list, struct net_user *user)
     {
         list = list->next;
     }
-    
+
     list->next = user;
 }
 
